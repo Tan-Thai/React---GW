@@ -16,6 +16,7 @@ function App() {
     setWeekOffset(prev => prev + offset);
   };
 
+  
   return (
     <div className="container position relative">
       <h2 className="row justify-content-center"> Available Times </h2>
@@ -30,8 +31,8 @@ function App() {
       </div>
 
       <div className="row justify-content-center">
-        {days.map((day, index) => (
-          <div key={index} className="col-2">
+        {days.map((day) => (
+          <div key={day.id} className="col-2">
             <div className="square dateFont">
               <span>{day.name}</span>
               <span>{day.date}</span>
@@ -46,9 +47,9 @@ function App() {
           </div>
         ))}
       </div>
-
     </div>
   );
+
 }
 
 
