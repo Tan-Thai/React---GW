@@ -10,13 +10,32 @@ import { getDates } from './Components/DateUtils';
 function App() {
 
   const [WeekOffset, setWeekOffset] = useState(0)
-  const days = getDates(WeekOffset);
+  const [days, setDays] = useState(() => getDates(WeekOffset));
 
   const adjustWeek = (offset) => {
-    setWeekOffset(prev => prev + offset);
+    const newWeekOffset = WeekOffset + offset;
+    setWeekOffset(newWeekOffset);
+    setDays(getDates(newWeekOffset));
   };
 
-  
+  const handleTimeslot = (dayId, timeslotIndex) => {
+    const updatedDays = days.map((day) => {
+      if (day.id === dayId) {
+        const updatedTimeslots = day.timeslots.map((timeslot, index) => {
+          if (index === timeslotIndex) {
+            return { ...timeslot, booked: true };
+          }
+
+          return timeslot;
+        });
+
+        return { ...day, timeslots: updatedTimeslots };
+      }
+      return day;
+    });
+    setDays(updatedDays);
+  };
+
   return (
     <div className="container position relative">
       <h2 className="row justify-content-center"> Available Times </h2>
@@ -39,7 +58,12 @@ function App() {
             </div>
             <div className="tall-column">
               {day.timeslots.map((timeslot, buttonIndex) => (
-                <button key={buttonIndex} className="btn btn-primary mt-1 mb-1 bookingBtn">
+                <button
+                  key={buttonIndex}
+                  className="btn btn-primary mt-1 mb-1 bookingBtn"
+                  onClick={() => handleTimeslot(day.id, buttonIndex)}
+                  disabled={timeslot.booked}
+                >
                   {timeslot.time}
                 </button>
               ))}

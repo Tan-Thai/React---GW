@@ -27,7 +27,7 @@ export function getDates(WeekOffset) {
     }
 
     console.log(`Adjusted date: ${days}`);
-    return { days}; /*bookedSlots*/
+    return days; /*bookedSlots*/
 }
 
 function getTimeslotsArray() {
