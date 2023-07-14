@@ -11,44 +11,55 @@ function App() {
   const [weekIndex, setWeekIndex] = useState(0);
   const [weeks, setWeeks] = useState(() => getDates(0));
   const [timeslotState, setTimeslotState] = useState(getInitialTimeslotState());
-  
-  
+
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  
+
   const adjustWeek = (offset) => {
     const newWeekIndex = weekIndex + offset;
     setWeekIndex(newWeekIndex);
-    // console.log(weekIndex);
     setWeeks(getDates(newWeekIndex * 7));
-    console.log(weeks, weekIndex)
+    
+    console.log(newWeekIndex)
   };
-  
+
   const handleTimeslot = (dayIndex, timeslotIndex) => {
     setWeeks(prevWeeks => {
       const updatedWeeks = [...prevWeeks];
-      const targetDay = updatedWeeks[weekIndex]?.find(day => day.id === dayIndex);
-  
-      if (targetDay && targetDay.date >= today.getDate()) {
-        const targetTimeslot = targetDay.timeslots[timeslotIndex];
-        
-        if (targetTimeslot && !targetTimeslot.booked) {
-          targetTimeslot.booked = true;
-  
-          setTimeslotState(prevState => ({
-            ...prevState,
-            [`${dayIndex}-${timeslotIndex}`]: true
-          }));
+      const targetWeek = updatedWeeks[weekIndex];
+
+      if (targetWeek) {
+        const targetDay = targetWeek.find(day => day.id === dayIndex);
+
+        if (targetDay) {
+          const currentDate = new Date();
+          const targetDate = new Date(currentDate);
+          targetDate.setDate(targetDate.getDate() + (weekIndex * 7) + dayIndex);
+
+          if (targetDate >= currentDate) {
+            const targetTimeslot = targetDay.timeslots[timeslotIndex];
+
+            if (targetTimeslot && !targetTimeslot.booked) {
+              targetTimeslot.booked = true;
+
+              setTimeslotState(prevState => ({
+                ...prevState,
+                [`${dayIndex}-${timeslotIndex}`]: true
+              }));
+            }
+          }
         }
       }
-  
+
       return updatedWeeks;
     });
   };
-  
+
+
   function getInitialTimeslotState() {
     const initialTimeslotState = {};
-    const currentWeek = weeks[weekIndex] || [];
+    const currentWeek = weeks[weekIndex] || []; /* needed to avoid breaking when going past week0-3*/
     currentWeek.forEach((day) => {
       day.timeslots.forEach((timeslot, index) => {
         const key = `${day.id}-${index}`;
@@ -60,19 +71,27 @@ function App() {
 
   const currentWeek = weeks[weekIndex];
 
- return (
+  return (
     <div className="container position relative">
       <h2 className="row justify-content-center"> Available Times </h2>
 
       <div className="row justify-content-center align-items-center mb-2">
         <div className="col-md-5 text-start">
-          <button className="btn btn-outline-secondary weekBtn" onClick={() => adjustWeek(-1)}>Previous Week</button>
+          <button className="btn btn-outline-secondary weekBtn"
+            onClick={() => adjustWeek(-1)}
+            disabled={weekIndex === 0} >
+            Previous Week
+          </button>
         </div>
         <div className="col-1 text-center weekFont">
           {currentWeek && `Week ${currentWeek[0].weekNumber}`}
         </div>
         <div className="col-md-5 text-end">
-          <button className="btn btn-outline-secondary weekBtn" onClick={() => adjustWeek(1)}>Next Week</button>
+          <button className="btn btn-outline-secondary weekBtn"
+            onClick={() => adjustWeek(1)}
+            disabled={weekIndex === 3}>
+            Next Week
+          </button>
         </div>
       </div>
 
@@ -85,15 +104,15 @@ function App() {
                 <span>{day.date}</span>
               </div>
               <div className="tall-column">
-                {day.timeslots.map((timeslot, buttonIndex) => {
-                  const key = `${day.id}-${buttonIndex}`;
+                {day.timeslots.map((timeslot, dayIndex) => {
+                  const key = `${day.id}-${dayIndex}`;
                   const isBooked = timeslotState[key];
                   return (
                     <button
-                      key={buttonIndex}
+                      key={dayIndex}
                       className={`btn btn-primary mt-1 mb-1 bookingBtn${isBooked ? ' booked' : ''}`}
-                      onClick={() => handleTimeslot(day.id, buttonIndex)}
-                      disabled={isBooked || day.date < today.getDate()}
+                      onClick={() => handleTimeslot(day.id, dayIndex)}
+                      disabled={isBooked || day.date < today.getDate() && weekIndex === 0}
                     >
                       {isBooked ? 'Booked' : timeslot.time}
                     </button>

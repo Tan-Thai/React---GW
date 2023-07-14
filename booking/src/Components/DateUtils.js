@@ -26,6 +26,7 @@ export function getDates(WeekOffset) {
 
         weeks.push(days);
     }
+    
     console.log(weeks)
     return weeks;
 }
