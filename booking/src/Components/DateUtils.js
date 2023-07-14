@@ -1,37 +1,33 @@
 
 export function getDates(WeekOffset) {
 
-    const days = [
-        { name: 'Mon', timeslots: getTimeslotsArray() },
-        { name: 'Tue', timeslots: getTimeslotsArray() },
-        { name: 'Wed', timeslots: getTimeslotsArray() },
-        { name: 'Thu', timeslots: getTimeslotsArray() },
-        { name: 'Fri', timeslots: getTimeslotsArray() },
-        { name: 'Sat', timeslots: getTimeslotsArray() },
-        { name: 'Sun', timeslots: getTimeslotsArray() }
-    ];
+    const weeks = [];
 
-    const timeslots = getTimeslotsArray();
-    const bookedSlots = timeslots.map(() => false);
+    for (let week = 0; week < 4; week++) {
+        const days = [];
 
+        const today = new Date();
+        today.setDate(today.getDate() + (WeekOffset + (7 * week)));
 
-    const today = new Date();
-    today.setDate(today.getDate() + WeekOffset);
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() + (i - today.getDay()) + 1);
 
-    for (let i = 0; i < days.length; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() + (i - today.getDay()) + 1);
+            const day = {
+                name: getDayName(date.getDay()),
+                date: date.getDate(),
+                id: i + (week * 7), // Add a unique ID for each day
+                weekNumber: getISOWeekNumber(date),
+                timeslots: getTimeslotsArray()
+            };
 
-        days[i].date = date.getDate();
-        days[i].id = i; // Add a unique ID for each day
+            days.push(day);
+        }
 
-        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-        const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
-        days[i].weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+        weeks.push(days);
     }
-
-    console.log(`Adjusted date: ${days.date}`);
-    return days; /*bookedSlots*/
+    console.log(weeks)
+    return weeks;
 }
 
 function getTimeslotsArray() {
@@ -47,4 +43,19 @@ function getTimeslotsArray() {
     ];
 
     return timeslots;
+}
+
+function getDayName(dayIndex) {
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return daysOfWeek[dayIndex];
+}
+
+function getISOWeekNumber(date) {
+    const target = new Date(date.getTime());
+    target.setDate(target.getDate() + 3 - (target.getDay() + 6) % 7);
+
+    const startOfYear = new Date(target.getFullYear(), 0, 1);
+    const weekNumber = Math.ceil(((target - startOfYear) / 86400000 + 1) / 7);
+
+    return weekNumber;
 }
