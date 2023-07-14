@@ -19,9 +19,9 @@ function App() {
   const adjustWeek = (offset) => {
     const newWeekIndex = weekIndex + offset;
     setWeekIndex(newWeekIndex);
-    setWeeks(getDates(newWeekIndex * 7));
-    
-    console.log(newWeekIndex)
+    setWeeks(getDates(newWeekIndex));
+  
+    console.log(newWeekIndex);
   };
 
   const handleTimeslot = (dayIndex, timeslotIndex) => {
@@ -36,6 +36,7 @@ function App() {
           const currentDate = new Date();
           const targetDate = new Date(currentDate);
           targetDate.setDate(targetDate.getDate() + (weekIndex * 7) + dayIndex);
+          console.log(targetDate, currentDate)
 
           if (targetDate >= currentDate) {
             const targetTimeslot = targetDay.timeslots[timeslotIndex];
@@ -63,7 +64,7 @@ function App() {
     currentWeek.forEach((day) => {
       day.timeslots.forEach((timeslot, index) => {
         const key = `${day.id}-${index}`;
-        initialTimeslotState[key] = timeslot ? timeslot.booked : false;
+        initialTimeslotState[key] = timeslot ? timeslot.booked : false; //yoink form overflow  -- 
       });
     });
     return initialTimeslotState;
@@ -109,13 +110,13 @@ function App() {
                   const isBooked = timeslotState[key];
                   return (
                     <button
-                      key={dayIndex}
+                      key={dayIndex} //0-6 depending on what weekday.
                       className={`btn btn-primary mt-1 mb-1 bookingBtn${isBooked ? ' booked' : ''}`}
                       onClick={() => handleTimeslot(day.id, dayIndex)}
                       disabled={isBooked || day.date < today.getDate() && weekIndex === 0}
                     >
-                      {isBooked ? 'Booked' : timeslot.time}
-                    </button>
+                      {isBooked ? 'Booked' : timeslot.time} {/*prints the booked*/}
+                    </button> 
                   );
                 })}
               </div>

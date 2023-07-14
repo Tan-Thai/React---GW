@@ -1,36 +1,34 @@
 
 export function getDates(WeekOffset) {
-
     const weeks = [];
-
+    const today = new Date();
+  
     for (let week = 0; week < 4; week++) {
-        const days = [];
-
-        const today = new Date();
-        today.setDate(today.getDate() + (WeekOffset + (7 * week)));
-
-        for (let i = 0; i < 7; i++) {
-            const date = new Date(today);
-            date.setDate(date.getDate() + (i - today.getDay()) + 1);
-
-            const day = {
-                name: getDayName(date.getDay()),
-                date: date.getDate(),
-                id: i + (week * 7), // Add a unique ID for each day
-                weekNumber: getISOWeekNumber(date),
-                timeslots: getTimeslotsArray()
-            };
-
-            days.push(day);
-        }
-
-        weeks.push(days);
+      const days = [];
+  
+      today.setDate(today.getDate() + (WeekOffset + (7 * week)));
+  
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() + (i - today.getDay()) +1 ); //+1 to start on mondays, also yoinked from overflow
+        
+        const day = {
+          name: getDayName(date.getDay()),
+          date: date.getDate(),
+          id: i + (week * 7),
+          weekNumber: getISOWeekNumber(date),
+          timeslots: getTimeslotsArray()
+        };
+  
+        days.push(day);
+      }
+  
+      weeks.push(days);
     }
-    
-    console.log(weeks)
+  
+    console.log(weeks);
     return weeks;
-}
-
+  }
 function getTimeslotsArray() {
     const timeslots = [
         { time: '10:00', booked: false },
@@ -51,6 +49,7 @@ function getDayName(dayIndex) {
     return daysOfWeek[dayIndex];
 }
 
+//mega yoinked from StackOverflow
 function getISOWeekNumber(date) {
     const target = new Date(date.getTime());
     target.setDate(target.getDate() + 3 - (target.getDay() + 6) % 7);
