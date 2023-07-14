@@ -13,7 +13,7 @@ export function getDates(WeekOffset) {
 
     const timeslots = getTimeslotsArray();
     const bookedSlots = timeslots.map(() => false);
-  
+
 
     const today = new Date();
     today.setDate(today.getDate() + WeekOffset);
@@ -24,6 +24,10 @@ export function getDates(WeekOffset) {
 
         days[i].date = date.getDate();
         days[i].id = i; // Add a unique ID for each day
+
+        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+        const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+        days[i].weekNumber = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
     }
 
     console.log(`Adjusted date: ${days.date}`);

@@ -40,12 +40,14 @@ function App() {
     <div className="container position relative">
       <h2 className="row justify-content-center"> Available Times </h2>
 
-       Start of week
-      <div className="row justify-content-center mb-2"> 
-        <div className="col-12 col-md-6 text-start">
+      <div className="row justify-content-center align-items-center mb-2"> 
+        <div className="col-md-5 text-start">
           <button className="btn btn-outline-secondary weekBtn" onClick={() => adjustWeek(-7)}>Previous Week</button>
         </div>
-        <div className="col-12 col-md-6 text-end">
+        <div className="col-1 text-center weekFont">
+          Week {days[0].weekNumber}
+        </div>
+        <div className="col-md-5 text-end">
           <button className="btn btn-outline-secondary weekBtn" onClick={() => adjustWeek(+7)}>Next Week</button>
         </div>
       </div>

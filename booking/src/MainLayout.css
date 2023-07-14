@@ -92,3 +92,11 @@
   .bookingBtn:disabled:hover {
     background-color: lightgray;
   }
+
+  .weekFont {
+    font-size: large;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
