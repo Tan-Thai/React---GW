@@ -46,7 +46,6 @@ function App() {
     });
   };
   
-  
   function getInitialTimeslotState() {
     const initialTimeslotState = {};
     const currentWeek = weeks[weekIndex] || [];
@@ -61,7 +60,7 @@ function App() {
 
   const currentWeek = weeks[weekIndex];
 
-  return (
+ return (
     <div className="container position relative">
       <h2 className="row justify-content-center"> Available Times </h2>
 
@@ -70,39 +69,41 @@ function App() {
           <button className="btn btn-outline-secondary weekBtn" onClick={() => adjustWeek(-1)}>Previous Week</button>
         </div>
         <div className="col-1 text-center weekFont">
-          Week {currentWeek[0].weekNumber}
+          {currentWeek && `Week ${currentWeek[0].weekNumber}`}
         </div>
         <div className="col-md-5 text-end">
           <button className="btn btn-outline-secondary weekBtn" onClick={() => adjustWeek(1)}>Next Week</button>
         </div>
       </div>
 
-      <div className="row justify-content-center">
-        {currentWeek.map((day) => (
-          <div key={day.id} className="col-2">
-            <div className="square dateFont">
-              <span>{day.name}</span>
-              <span>{day.date}</span>
+      {currentWeek && (
+        <div className="row justify-content-center">
+          {currentWeek.map((day) => (
+            <div key={day.id} className="col-2">
+              <div className="square dateFont">
+                <span>{day.name}</span>
+                <span>{day.date}</span>
+              </div>
+              <div className="tall-column">
+                {day.timeslots.map((timeslot, buttonIndex) => {
+                  const key = `${day.id}-${buttonIndex}`;
+                  const isBooked = timeslotState[key];
+                  return (
+                    <button
+                      key={buttonIndex}
+                      className={`btn btn-primary mt-1 mb-1 bookingBtn${isBooked ? ' booked' : ''}`}
+                      onClick={() => handleTimeslot(day.id, buttonIndex)}
+                      disabled={isBooked || day.date < today.getDate()}
+                    >
+                      {isBooked ? 'Booked' : timeslot.time}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-            <div className="tall-column">
-              {day.timeslots.map((timeslot, buttonIndex) => {
-                const key = `${day.id}-${buttonIndex}`;
-                const isBooked = timeslotState[key];
-                return (
-                  <button
-                    key={buttonIndex}
-                    className={`btn btn-primary mt-1 mb-1 bookingBtn${isBooked ? ' booked' : ''}`}
-                    onClick={() => handleTimeslot(day.id, buttonIndex)}
-                    disabled={isBooked || day.date < today.getDate()}
-                  >
-                    {isBooked ? 'Booked' : timeslot.time}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
