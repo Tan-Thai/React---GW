@@ -26,7 +26,7 @@ export function getDates(WeekOffset) {
         days[i].id = i; // Add a unique ID for each day
     }
 
-    console.log(`Adjusted date: ${days}`);
+    console.log(`Adjusted date: ${days.date}`);
     return days; /*bookedSlots*/
 }
 
