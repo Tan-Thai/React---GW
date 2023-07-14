@@ -11,6 +11,8 @@ function App() {
 
   const [WeekOffset, setWeekOffset] = useState(0)
   const [days, setDays] = useState(() => getDates(WeekOffset));
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const adjustWeek = (offset) => {
     const newWeekOffset = WeekOffset + offset;
@@ -20,15 +22,13 @@ function App() {
 
   const handleTimeslot = (dayId, timeslotIndex) => {
     const updatedDays = days.map((day) => {
-      if (day.id === dayId) {
+      if (day.id === dayId && day.date >= today.getDate()) {
         const updatedTimeslots = day.timeslots.map((timeslot, index) => {
           if (index === timeslotIndex) {
-            return { ...timeslot, booked: true };
+            return { ...timeslot, booked: !timeslot.booked };
           }
-
           return timeslot;
         });
-
         return { ...day, timeslots: updatedTimeslots };
       }
       return day;
@@ -40,7 +40,8 @@ function App() {
     <div className="container position relative">
       <h2 className="row justify-content-center"> Available Times </h2>
 
-      <div className="row justify-content-center mb-2">
+       Start of week
+      <div className="row justify-content-center mb-2"> 
         <div className="col-12 col-md-6 text-start">
           <button className="btn btn-outline-secondary weekBtn" onClick={() => adjustWeek(-7)}>Previous Week</button>
         </div>
@@ -60,17 +61,18 @@ function App() {
               {day.timeslots.map((timeslot, buttonIndex) => (
                 <button
                   key={buttonIndex}
-                  className="btn btn-primary mt-1 mb-1 bookingBtn"
+                  className={`btn btn-primary mt-1 mb-1 bookingBtn${timeslot.booked ? ' booked' : ''}`}
                   onClick={() => handleTimeslot(day.id, buttonIndex)}
-                  disabled={timeslot.booked}
+                  disabled={timeslot.booked || day.date < today.getDate()}
                 >
-                  {timeslot.time}
+                  {timeslot.booked ? 'Booked' : timeslot.time}
                 </button>
               ))}
             </div>
           </div>
         ))}
       </div>
+
     </div>
   );
 
