@@ -87,6 +87,7 @@
     background-color: lightgray;
     color: white;
     cursor: not-allowed;
+    border-color: black;
   }
   
   .bookingBtn:disabled:hover {
